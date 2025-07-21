@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shelby & Matthew's Wedding - Order of the Day</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Quicksand:200,300&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="page-container">
+    <header>
+      <h1>Shelby & Matthew</h1>
+      <p class="date">27 August 2025</p>
+      <h2>Order of the Day</h2>
+    </header>
+    <main>
+      <section class="meal-checker">
+        <h2>Check your meal choices</h2>
+        <p>Enter your full name to see your meal choices.</p>
+        <input type="text" id="fullName" placeholder="Your full name">
+        <button id="check-meal">Check my meal choices</button>
+        <div id="meal-results"></div>
+      </section>
+      <section class="schedule">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Time</th>
+              <th scope="col">Event</th>
+              <th scope="col">Location / Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1:00pm</td><td>Groom arrives</td><td></td></tr>
+            <tr><td>1:30pm</td><td>Day guests begin to arrive</td><td></td></tr>
+            <tr><td>2:00pm</td><td>Ceremony<br><span class="sub">3 x bridesmaids<br>Bride &amp; MOB</span></td><td>Ground Floor</td></tr>
+            <tr><td>2:30pm</td><td>Confetti</td><td>Pathed pathway</td></tr>
+            <tr><td>2:30pm–4:00pm</td><td>Drinks Reception, Photos, Canapés</td><td>Outside</td></tr>
+            <tr><td>4:00pm–6:30pm</td><td>Wedding Breakfast</td><td>Marquee</td></tr>
+            <tr><td>After WB</td><td>Speeches<br><span class="sub">Vanessa Stanton<br>Jade Sedha<br>Matthew Watson<br>Sarah Watson<br>Chris Homer</span></td><td>Marquee (at tables)</td></tr>
+            <tr><td>7:30pm</td><td>Evening guests arrive</td><td></td></tr>
+            <tr><td>8:15pm</td><td>Cake Cutting</td><td></td></tr>
+            <tr><td>8:15pm</td><td>First Dance</td><td></td></tr>
+            <tr><td>9:15pm</td><td>Evening Food</td><td>Mezzanine</td></tr>
+            <tr><td>11:00pm</td><td>Music finishes / end of event<br><span class="sub">(Bar closes 10:45pm)</span></td><td></td></tr>
+            <tr><td>11:00pm</td><td>Venue closes</td><td></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <footer>
+      <p>&copy; 2025 Shelby & Matthew</p>
+    </footer>
+  </div>
+  <script>
+    const checkMealButton = document.getElementById('check-meal');
+    const fullNameInput = document.getElementById('fullName');
+    const mealResults = document.getElementById('meal-results');
+
+    let mealData = [];
+
+    fetch('./assets/wedding-info.json')
+      .then(response => response.json())
+      .then(data => {
+        mealData = data;
+      });
+
+    checkMealButton.addEventListener('click', () => {
+      const fullName = fullNameInput.value.trim();
+      if (fullName) {
+        const normalizedInput = fullName.toLowerCase().replace(/\s/g, '');
+        const guest = mealData.find(g => g.FullName && g.FullName.toLowerCase().replace(/\s/g, '').includes(normalizedInput));
+        if (guest) {
+          mealResults.innerHTML = `
+            <h3>Hi ${guest.FullName}!</h3>
+            <p>Here are your meal choices:</p>
+            <ul>
+              <li><strong>Starter:</strong> ${guest.Starter}</li>
+              <li><strong>Main:</strong> ${guest.Main}</li>
+              <li><strong>Dessert:</strong> ${guest.Dessert}</li>
+              <li><strong>Allergies:</strong> ${guest.Allergies || 'None'}</li>
+            </ul>
+          `;
+        } else {
+          mealResults.innerHTML = '<p>We couldn\'t find your name. Please make sure you entered it correctly.</p>';
+        }
+      } else {
+        mealResults.innerHTML = '<p>Please enter your full name.</p>';
+      }
+    });
+  </script>
+</body>
+</html> 
